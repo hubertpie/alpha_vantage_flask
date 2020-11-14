@@ -13,6 +13,32 @@
 		{% endfor %}
 	</select>
 	<input type="submit" name="submit button">
-{{ data }}
 </form>
+<canvas id="myChart"></canvas>
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var dates = {% if dates %} {{ dates|tojson }} {% else %} [] {% endif %}; 
+var ex_rate = {% if dates %} {{ ex_rate|tojson }} {% else %} [] {% endif %};
+var tick_start_point = Math.min.apply(Math, ex_rate)
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: dates.reverse(),
+        datasets: [{
+            label: '# of Votes',
+            data: ex_rate.reverse(),
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    suggestedMin: tick_start_point 
+                }
+            }]
+        }
+    }
+});
+</script>
 {% endblock %}
