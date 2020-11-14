@@ -1,5 +1,18 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-	{{ data }}
+<form action="/" method="POST">
+	<select name="currency1">
+		{% for x in currency_list%}
+		<option value="{{x[0]}}">{{x[1]}}</option>
+		{% endfor %}
+	</select>
+	<select name="currency2">
+		{% for x in currency_list%}
+		<option value="{{x[0]}}">{{x[1]}}</option>
+		{% endfor %}
+	</select>
+	<input type="submit" name="submit button">
+{{ data }}
+</form>
 {% endblock %}

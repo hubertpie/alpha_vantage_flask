@@ -1,12 +1,11 @@
-from alpha_vantage.timeseries import TimeSeries
+from alpha_vantage.foreignexchange import ForeignExchange
 import csv
 import secrets
 
-ts = TimeSeries(key=secrets.API_KEY)
+ts = ForeignExchange(key=secrets.API_KEY)
 
-# Just for test Key
-def get_data():
-	return ts.get_intraday('GOOGL')
+def get_data(curr_from, curr_to):
+	return ts.get_currency_exchange_daily(from_symbol=curr_from, to_symbol=curr_to, outputsize='full')
 
 def currency_list():
 	with open('physical_currency_list.csv') as csvfile:
