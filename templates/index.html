@@ -1,6 +1,10 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<button id="weekly" onclick="myFunction(7)">Last week</button>
+<button onclick="myFunction(30)">Last month</button>
+<button onclick="myFunction(365)">Last year</button>
+<button onclick="myFunction('all')">All data</button>
 <form action="/" method="POST">
 	<select name="currency1">
 		{% for x in currency_list%}
@@ -14,31 +18,80 @@
 	</select>
 	<input type="submit" name="submit button">
 </form>
-<canvas id="myChart"></canvas>
+<div style="width: 45%">
+    <canvas id="canvas"></canvas>
+ </div>
 <script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var dates = {% if dates %} {{ dates|tojson }} {% else %} [] {% endif %}; 
-var ex_rate = {% if dates %} {{ ex_rate|tojson }} {% else %} [] {% endif %};
-var tick_start_point = Math.min.apply(Math, ex_rate)
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: dates.reverse(),
-        datasets: [{
-            label: '# of Votes',
-            data: ex_rate.reverse(),
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    suggestedMin: tick_start_point 
-                }
-            }]
-        }
-    }
-});
+var trend_line_data = [];
+var dates = {% if dates %} {{ dates|tojson }}.reverse() {% else %} [] {% endif %}; 
+var ex_rate = {% if dates %} {{ ex_rate|tojson }}.reverse() {% else %} [] {% endif %};
+var tick_start_point = Math.min.apply(Math, ex_rate) * 0.95
+
+var chartData = {
+	labels: dates,
+	datasets: [{
+		type: 'line',
+		label: 'Trend line',
+		fill: false,
+		data: trend_line_data,
+		backgroundColor: 'rgb(255,15,20)',
+		borderColor: 'rgb(255,15,20)',
+		yAxisID: 'y-axis-1',
+		}, {
+		type: 'bar',
+		label: 'Exchange rate',
+		fill: false,
+		backgroundColor: 'rgb(5,155,200)',
+		borderColor: 'rgb(5,155,200)',
+		data: ex_rate,
+		yAxisID: 'y-axis-2'
+		}]
+};
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myLine = Chart.Line(ctx, {
+				data: chartData,
+				options: {
+					responsive: true,
+					hoverMode: 'index',
+					stacked: false,
+					title: {
+						display: false,
+					},
+					scales: {
+						yAxes: [{
+							type: 'linear',
+							display: true,
+							position: 'left',
+							id: 'y-axis-1',
+						}, {
+							type: 'linear',
+							display: true,
+							position: 'right',
+							id: 'y-axis-2',
+
+							// grid line settings
+							gridLines: {
+								drawOnChartArea: false, 
+							},
+						}],
+					}
+				}
+			});
+		};
+
+function myFunction(n){
+	if (n == 'all'){
+		chartData.datasets[0].data = trend_line_data;
+		chartData.datasets[1].data = ex_rate;
+		chartData.labels  = dates;
+	}
+	else {
+		chartData.datasets[0].data = trend_line_data.slice(Math.max(trend_line_data.length - n));
+		chartData.datasets[1].data = ex_rate.slice(Math.max(ex_rate.length - n));
+		chartData.labels= dates.slice(Math.max(dates.length -n));
+	}
+	myLine.update()
+}
 </script>
 {% endblock %}
