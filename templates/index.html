@@ -5,6 +5,7 @@
 <button onclick="myFunction(30)">Last month</button>
 <button onclick="myFunction(365)">Last year</button>
 <button onclick="myFunction('all')">All data</button>
+<h1>current exchange rate: {{ current_exchange_rate }}</h1>
 <form action="/" method="POST">
 	<select name="currency1">
 		{% for x in currency_list%}
@@ -31,7 +32,6 @@ var chartData = {
 	labels: dates,
 	datasets: [{
 		type: 'line',
-		label: 'Trend line',
 		fill: false,
 		data: trend_line_data,
 		backgroundColor: 'rgb(255,15,20)',
@@ -39,7 +39,6 @@ var chartData = {
 		yAxisID: 'y-axis-1',
 		}, {
 		type: 'bar',
-		label: 'Exchange rate',
 		fill: false,
 		backgroundColor: 'rgb(5,155,200)',
 		borderColor: 'rgb(5,155,200)',
@@ -52,6 +51,9 @@ var chartData = {
 			window.myLine = Chart.Line(ctx, {
 				data: chartData,
 				options: {
+					legend:{
+						display: false
+					},
 					responsive: true,
 					hoverMode: 'index',
 					stacked: false,
@@ -64,12 +66,14 @@ var chartData = {
 							display: true,
 							position: 'left',
 							id: 'y-axis-1',
+							ticks:{
+								min: tick_start_point
+							}
 						}, {
 							type: 'linear',
-							display: true,
+							display: false,
 							position: 'right',
 							id: 'y-axis-2',
-
 							// grid line settings
 							gridLines: {
 								drawOnChartArea: false, 
