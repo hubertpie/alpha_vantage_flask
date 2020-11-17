@@ -1,32 +1,53 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<button id="weekly" onclick="myFunction(7)">Last week</button>
-<button onclick="myFunction(30)">Last month</button>
-<button onclick="myFunction(365)">Last year</button>
-<button onclick="myFunction('all')">All data</button>
-<h1>current exchange rate: {{ current_exchange_rate }}</h1>
-<form action="/" method="POST">
-	<select name="currency1">
-		{% for x in currency_list%}
-		<option value="{{x[0]}}">{{x[1]}}</option>
-		{% endfor %}
-	</select>
-	<select name="currency2">
-		{% for x in currency_list%}
-		<option value="{{x[0]}}">{{x[1]}}</option>
-		{% endfor %}
-	</select>
-	<input type="submit" name="submit button">
-</form>
-<div style="width: 45%">
-    <canvas id="canvas"></canvas>
- </div>
-<script>
-var trend_line_data = [];
-var dates = {% if dates %} {{ dates|tojson }}.reverse() {% else %} [] {% endif %}; 
-var ex_rate = {% if dates %} {{ ex_rate|tojson }}.reverse() {% else %} [] {% endif %};
-var tick_start_point = Math.min.apply(Math, ex_rate) * 0.95
+<div class="row">
+	<div class="col-sm-8">
+		<div class="btn-group">
+			<button class="btn btn-primary" id="weekly" onclick="myFunction(7)">Last week</button>
+			<button class="btn btn-primary" onclick="myFunction(30)">Last month</button>
+			<button class="btn btn-primary" onclick="myFunction(365)">Last year</button>
+			<button class="btn btn-primary" onclick="myFunction('all')">All data</button>
+		</div>
+		<form action="/" method="POST">
+			<div class="row">
+				<div class="col">
+					<select class="form-control" id="from_symbol" name="from_symbol">
+					{% for x in currency_list%}
+					<option  value="{{x[0]}}">{{x[1]}}</option>
+					{% endfor %}
+					</select>
+					</div>
+				<div class="col">
+					<select class="form-control" id="to_symbol" name="to_symbol">
+					{% for x in currency_list%}
+					<option value="{{x[0]}}">{{x[1]}}</option>
+					{% endfor %}
+					</select>
+				</div>
+			</div>
+			<button class="btn btn-info" type="submit">Get historical data</button>
+		</form>
+		<canvas id="canvas"></canvas>
+	</div>
+	<div class="col-sm-4">
+		<div class="jumbotron jumbotron-fluid">
+		  <div class="container">
+		    <h1 class="display-4"></h1>
+		    <p class="lead" id="current"></p>
+		  </div>
+		</div>
+		<button class="btn btn-success" type="submit" id="live_currency_button">Click for live exchange ratio</button>
+	</div>
+
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+<script type="text/javascript">
+	var dates = {% if dates %} {{ dates|tojson }}.reverse() {% else %} [] {% endif %}; 
+	var ex_rate = {% if dates %} {{ ex_rate|tojson }}.reverse() {% else %} [] {% endif %};
+	var tick_start_point = Math.min.apply(Math, ex_rate) * 0.95
+	var trend_line_data = [];
 
 var chartData = {
 	labels: dates,
