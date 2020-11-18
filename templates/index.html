@@ -1,7 +1,11 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+{% if request.form['from_symbol'] %}
+<h1>Exchange ratio from {{ request.form['from_symbol'] }} to {{ request.form['to_symbol'] }}</h1>
+{% endif %}
 <div class="row">
+	<h1></h1>
 	<div class="col-sm-8">
 		<div class="btn-group">
 			<button class="btn btn-primary" id="weekly" onclick="myFunction(7)">Last week</button>
@@ -9,6 +13,7 @@
 			<button class="btn btn-primary" onclick="myFunction(365)">Last year</button>
 			<button class="btn btn-primary" onclick="myFunction('all')">All data</button>
 		</div>
+		<canvas class="mt-5" id="canvas"></canvas>
 		<form action="/" method="POST">
 			<div class="row">
 				<div class="col">
@@ -25,21 +30,24 @@
 					{% endfor %}
 					</select>
 				</div>
+				<div class="col">
+					<button class="btn btn-info" type="submit">Get historical data</button>
+				</div>
 			</div>
-			<button class="btn btn-info" type="submit">Get historical data</button>
 		</form>
-		<canvas id="canvas"></canvas>
 	</div>
+	{% if request.form['from_symbol'] %}
 	<div class="col-sm-4">
 		<div class="jumbotron jumbotron-fluid">
 		  <div class="container">
-		    <h1 class="display-4"></h1>
-		    <p class="lead" id="current"></p>
+		    <p" id="current"></p>
 		  </div>
 		</div>
-		<button class="btn btn-success" type="submit" id="live_currency_button">Click for live exchange ratio</button>
+		<input type="hidden" value="{{ request.form['from_symbol'] }}" id="from_currency_live">
+		<input type="hidden" value="{{ request.form['to_symbol'] }}" id="to_currency_live">
+		<button class="btn btn-success" id="live_currency_button" type="submit">Click for live exchange ratio</button>
 	</div>
-
+	{% endif %}
 </div>
 
 <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
