@@ -14,4 +14,4 @@ def currency_list():
 
 def get_current_exchange_rate(curr_from, curr_to):
 	data = ts.get_currency_exchange_rate(from_currency=curr_from, to_currency=curr_to)
-	return data[0]['5. Exchange Rate']
+	return [data[0]['5. Exchange Rate'], data[0]['6. Last Refreshed']]

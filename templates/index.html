@@ -40,7 +40,8 @@
 	<div class="col-sm-4">
 		<div class="jumbotron jumbotron-fluid">
 		  <div class="container">
-		    <p" id="current"></p>
+		  	<p id="data"></p>
+		    <p id="current"></p>
 		  </div>
 		</div>
 		<input type="hidden" value="{{ request.form['from_symbol'] }}" id="from_currency_live">
@@ -54,25 +55,18 @@
 <script type="text/javascript">
 	var dates = {% if dates %} {{ dates|tojson }}.reverse() {% else %} [] {% endif %}; 
 	var ex_rate = {% if dates %} {{ ex_rate|tojson }}.reverse() {% else %} [] {% endif %};
-	var tick_start_point = Math.min.apply(Math, ex_rate) * 0.95
-	var trend_line_data = [];
+	var tick_start_point = Math.min.apply(Math, ex_rate) * 0.95;
 
 var chartData = {
 	labels: dates,
-	datasets: [{
-		type: 'line',
-		fill: false,
-		data: trend_line_data,
-		backgroundColor: 'rgb(255,15,20)',
-		borderColor: 'rgb(255,15,20)',
-		yAxisID: 'y-axis-1',
-		}, {
+	datasets: [ 
+	{
 		type: 'bar',
 		fill: false,
 		backgroundColor: 'rgb(5,155,200)',
 		borderColor: 'rgb(5,155,200)',
 		data: ex_rate,
-		yAxisID: 'y-axis-2'
+		yAxisID: 'y-axis-1'
 		}]
 };
 		window.onload = function() {
@@ -98,16 +92,12 @@ var chartData = {
 							ticks:{
 								min: tick_start_point
 							}
-						}, {
-							type: 'linear',
-							display: false,
-							position: 'right',
-							id: 'y-axis-2',
-							// grid line settings
-							gridLines: {
-								drawOnChartArea: false, 
-							},
 						}],
+						xAxes:[{
+							ticks:{
+								maxTicksLimit: 10
+							}
+						}]
 					}
 				}
 			});
@@ -115,13 +105,11 @@ var chartData = {
 
 function myFunction(n){
 	if (n == 'all'){
-		chartData.datasets[0].data = trend_line_data;
-		chartData.datasets[1].data = ex_rate;
+		chartData.datasets[0].data = ex_rate;
 		chartData.labels  = dates;
 	}
 	else {
-		chartData.datasets[0].data = trend_line_data.slice(Math.max(trend_line_data.length - n));
-		chartData.datasets[1].data = ex_rate.slice(Math.max(ex_rate.length - n));
+		chartData.datasets[0].data = ex_rate.slice(Math.max(ex_rate.length - n));
 		chartData.labels= dates.slice(Math.max(dates.length -n));
 	}
 	myLine.update()

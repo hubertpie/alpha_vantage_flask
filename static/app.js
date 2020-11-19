@@ -14,6 +14,7 @@ $(document).ready(function(){
 		});
 
 		req.done(function(data){
+			$("#data").text("Last refreshed: " + data.last_refreshed + "UTC±00:00");
 			$("#current").text("Current exchange rate: " + data.current_exchange_rate);
 		});
 

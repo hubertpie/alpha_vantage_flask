@@ -23,5 +23,5 @@ def index():
 def update():
 	from_symbol = request.form['from_currency_live']
 	to_symbol = request.form['to_currency_live']	
-	current_exchange_rate = alpha_data.get_current_exchange_rate(from_symbol, to_symbol)
-	return jsonify({'result': 'success', 'current_exchange_rate': current_exchange_rate})
+	current_exchange_rate, last_refreshed = alpha_data.get_current_exchange_rate(from_symbol, to_symbol)
+	return jsonify({'result': 'success', 'current_exchange_rate': current_exchange_rate, 'last_refreshed': last_refreshed})
