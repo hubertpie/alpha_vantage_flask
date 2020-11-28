@@ -1,12 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-{% if request.form['from_symbol'] %}
-<h1>Exchange ratio from {{ request.form['from_symbol'] }} to {{ request.form['to_symbol'] }}</h1>
-{% endif %}
-<div class="row">
+
+<h1 class="text-center">{% if request.form['from_symbol'] %} Exchange ratio from {{ request.form['from_symbol'] }} to {{ request.form['to_symbol'] }} {% else %} Currency exchange rate {% endif %}</h1>
+
+<div class="row mt-5">
 	<h1></h1>
-	<div class="col-sm-8">
+	<div class="col-8">
 		<div class="btn-group">
 			<button class="btn btn-primary" id="weekly" onclick="myFunction(7)">Last week</button>
 			<button class="btn btn-primary" onclick="myFunction(30)">Last month</button>
@@ -36,8 +36,14 @@
 			</div>
 		</form>
 	</div>
-	{% if request.form['from_symbol'] %}
-	<div class="col-sm-4">
+	<div class="card" style="width: 18rem; height: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">Live exchange rate</h5>
+    <h6 class="card-subtitle mb-2 text-muted" id="date"></h6>
+    <p class="card-text" id="current_exchange"></p>
+  </div>
+</div>
+<!-- 	<div class="col-3">
 		<div class="jumbotron jumbotron-fluid">
 		  <div class="container">
 		  	<p id="data"></p>
@@ -46,11 +52,8 @@
 		</div>
 		<input type="hidden" value="{{ request.form['from_symbol'] }}" id="from_currency_live">
 		<input type="hidden" value="{{ request.form['to_symbol'] }}" id="to_currency_live">
-		<button class="btn btn-success" id="live_currency_button" type="submit">Click for live exchange ratio</button>
-	</div>
-	{% endif %}
+	</div> -->
 </div>
-
 <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
 <script type="text/javascript">
 	var dates = {% if dates %} {{ dates|tojson }}.reverse() {% else %} [] {% endif %}; 
@@ -114,5 +117,31 @@ function myFunction(n){
 	}
 	myLine.update()
 }
+
+{% if ex_rate %}
+$(document).ready(function(){
+		var from_symbol = {{ request.form['from_symbol']|tojson }};
+		var to_currency = {{ request.form['to_symbol']|tojson }};
+
+		window.setInterval(function(){
+		req = $.ajax({
+			url: '/update',
+			type: 'POST',
+			data: {
+					from_currency_live: from_symbol, 
+					to_currency_live: to_currency
+				}
+		});
+
+		req.done(function(data){
+			$("#date").text("Last refreshed: " + data.last_refreshed + "UTC±00:00");
+			$("#current_exchange").text("Current exchange rate: " + data.current_exchange_rate);
+		});
+
+		},30000);
+
+	});
+{% endif %}
+
 </script>
 {% endblock %}

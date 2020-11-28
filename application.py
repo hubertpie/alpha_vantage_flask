@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-	currency_list = alpha_data.currency_list()
+	currency_list = alpha_data.get_currency_list()
 	if request.method == 'POST':
 		from_symbol = request.form['from_symbol']
 		to_symbol = request.form['to_symbol']
@@ -17,7 +17,6 @@ def index():
 		return render_template('index.html', currency_list=currency_list, dates=dates, ex_rate=ex_rate, from_symbol=from_symbol, to_symbol=to_symbol)
 
 	return render_template('index.html', currency_list=currency_list)
-
 
 @app.route("/update", methods=['POST'])
 def update():
