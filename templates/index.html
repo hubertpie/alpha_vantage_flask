@@ -43,18 +43,7 @@
     <p class="card-text" id="current_exchange"></p>
   </div>
 </div>
-<!-- 	<div class="col-3">
-		<div class="jumbotron jumbotron-fluid">
-		  <div class="container">
-		  	<p id="data"></p>
-		    <p id="current"></p>
-		  </div>
-		</div>
-		<input type="hidden" value="{{ request.form['from_symbol'] }}" id="from_currency_live">
-		<input type="hidden" value="{{ request.form['to_symbol'] }}" id="to_currency_live">
-	</div> -->
 </div>
-<script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
 <script type="text/javascript">
 	var dates = {% if dates %} {{ dates|tojson }}.reverse() {% else %} [] {% endif %}; 
 	var ex_rate = {% if dates %} {{ ex_rate|tojson }}.reverse() {% else %} [] {% endif %};
