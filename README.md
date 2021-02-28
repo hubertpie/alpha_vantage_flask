@@ -1,4 +1,4 @@
-# alpha_vantage_flask 
+# Currency exchange
 ## Little web application to view exchange rate from alpha vantage API
 
 ### Installation (windows)
